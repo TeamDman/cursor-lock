@@ -2,11 +2,16 @@
 
 A simple Windows utility for confining the cursor to a specific monitor.
 
-
-
 https://github.com/user-attachments/assets/8611340d-15e6-4065-a323-56b80a96ba1a
 
 
+## Installation
+
+This is a Windows-only tool.
+
+Check out the [Releases page](https://github.com/TeamDman/cursor-lock/releases) to find the `.exe` files.
+
+## Sample Output
 
 
 ```pwsh
