@@ -2,6 +2,13 @@
 
 A simple Windows utility for confining the cursor to a specific monitor.
 
+
+
+https://github.com/user-attachments/assets/8611340d-15e6-4065-a323-56b80a96ba1a
+
+
+
+
 ```pwsh
 cursor-lock on  main [$!?] is 📦 v0.1.0 via 🦀 v1.82.0-nightly took 9s
 ❯ cargo run
@@ -23,3 +30,12 @@ Hotkey pressed: deactivating clipping.
 Hotkey pressed: activating clipping.
 Hotkey pressed: deactivating clipping.
 ```
+
+
+## Known Issues
+
+If you have your monitor DPI scaling not at 100% then the program fails to set the clipping bounds properly.
+
+I should be able to fix this but it's time for bed rn lol
+
+See also: https://github.com/teamdman/monitor-scaling/
