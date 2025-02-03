@@ -1,20 +1,22 @@
-mod clip_cursor;
-mod monitors;
 mod chimes;
+mod clip_cursor;
 mod hotkeys;
+mod monitors;
 
-use clip_cursor::{activate_clipping, deactivate_clipping};
+use clip_cursor::activate_clipping;
+use clip_cursor::deactivate_clipping;
 use eyre::bail;
 use monitors::pick_monitor;
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::atomic::AtomicBool;
+use std::sync::atomic::Ordering;
 use std::sync::Arc;
-use std::time::Duration;
 use std::thread;
+use std::time::Duration;
 use windows::Win32::Foundation::RECT;
 
 fn main() -> eyre::Result<()> {
     color_eyre::install()?;
-    
+
     // Ask the user to pick a monitor.
     let monitor = match pick_monitor() {
         Some(m) => m,

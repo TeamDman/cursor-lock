@@ -1,8 +1,9 @@
-// src/chimes.rs
-
-use std::io::{BufReader, Cursor};
-use rodio::{Decoder, OutputStream, Sink};
 use eyre::Result;
+use rodio::Decoder;
+use rodio::OutputStream;
+use rodio::Sink;
+use std::io::BufReader;
+use std::io::Cursor;
 
 // Embed the MP3 files directly into the binary.
 const ACTIVATE_MP3: &[u8] = include_bytes!("assets/activate.mp3");
@@ -15,20 +16,20 @@ pub fn play_sound_from_bytes(audio_data: &'static [u8]) -> Result<()> {
     // Create an output stream.
     let (_stream, stream_handle) = OutputStream::try_default()?;
     let sink = Sink::try_new(&stream_handle)?;
-    
+
     // Create a Cursor so we can use the audio data as a stream.
     let cursor = Cursor::new(audio_data);
     let reader = BufReader::new(cursor);
-    
+
     // Decode the audio.
     let source = Decoder::new(reader)?;
-    
+
     // Append the source to the sink.
     sink.append(source);
-    
+
     // Wait until the sound finishes playing.
     sink.sleep_until_end();
-    
+
     Ok(())
 }
 

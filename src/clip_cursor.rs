@@ -1,6 +1,6 @@
+use eyre::Result;
 use windows::Win32::Foundation::RECT;
 use windows::Win32::UI::WindowsAndMessaging::ClipCursor;
-use eyre::Result;
 
 // Import our chimes module.
 use crate::chimes;
