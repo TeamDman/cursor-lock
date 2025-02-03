@@ -1,17 +1,21 @@
 mod clip_cursor;
 mod monitors;
 mod chimes;
+mod hotkeys;
 
 use clip_cursor::{activate_clipping, deactivate_clipping};
 use eyre::bail;
 use monitors::pick_monitor;
-use std::thread::sleep;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::Arc;
 use std::time::Duration;
+use std::thread;
 use windows::Win32::Foundation::RECT;
 
 fn main() -> eyre::Result<()> {
     color_eyre::install()?;
     
+    // Ask the user to pick a monitor.
     let monitor = match pick_monitor() {
         Some(m) => m,
         None => {
@@ -32,15 +36,30 @@ fn main() -> eyre::Result<()> {
         monitor.name, monitor.width, monitor.height, monitor.x, monitor.y
     );
 
-    // Activate clipping and play the activation sound.
+    // Activate clipping immediately.
     activate_clipping(rect)?;
-    println!("Cursor locked. It will be unlocked after 20 seconds.");
+    // The global "enabled" state starts as true.
+    let enabled = Arc::new(AtomicBool::new(true));
 
-    sleep(Duration::from_secs(20));
+    // Launch the hotkey listener in a separate thread.
+    hotkeys::run_hotkey_listener(rect, enabled.clone())?;
 
-    // Deactivate clipping and play the deactivation sound.
-    deactivate_clipping()?;
-    println!("Cursor clipping deactivated. Exiting.");
+    // Install a Ctrl+C handler to ensure clipping is deactivated on exit.
+    {
+        let enabled_clone = enabled.clone();
+        ctrlc::set_handler(move || {
+            if enabled_clone.load(Ordering::SeqCst) {
+                if let Err(e) = deactivate_clipping() {
+                    eprintln!("Error deactivating clipping: {:?}", e);
+                }
+            }
+            std::process::exit(0);
+        })?;
+    }
 
-    Ok(())
+    println!("Hotkey listener running (F9 to toggle clipping). Press Ctrl+C to exit.");
+    // Wait indefinitely.
+    loop {
+        thread::sleep(Duration::from_secs(1));
+    }
 }

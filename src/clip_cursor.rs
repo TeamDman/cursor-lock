@@ -12,7 +12,7 @@ pub fn activate_clipping(rect: RECT) -> Result<()> {
         ClipCursor(Some(&rect))?;
     }
     // Play the activation chime.
-    chimes::play_sound("src/assets/activate.mp3")?;
+    chimes::play_activation()?;
     Ok(())
 }
 
@@ -22,6 +22,6 @@ pub fn deactivate_clipping() -> Result<()> {
         ClipCursor(None)?;
     }
     // Play the deactivation chime.
-    chimes::play_sound("src/assets/deactivate.mp3")?;
+    chimes::play_deactivation()?;
     Ok(())
 }
