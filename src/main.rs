@@ -1,8 +1,8 @@
 mod clip_cursor;
 mod monitors;
+mod chimes;
 
-use clip_cursor::activate_clipping;
-use clip_cursor::deactivate_clipping;
+use clip_cursor::{activate_clipping, deactivate_clipping};
 use eyre::bail;
 use monitors::pick_monitor;
 use std::thread::sleep;
@@ -11,6 +11,7 @@ use windows::Win32::Foundation::RECT;
 
 fn main() -> eyre::Result<()> {
     color_eyre::install()?;
+    
     let monitor = match pick_monitor() {
         Some(m) => m,
         None => {
@@ -30,12 +31,16 @@ fn main() -> eyre::Result<()> {
         "Locking cursor to monitor: {} ({}x{}, pos: {}x{})",
         monitor.name, monitor.width, monitor.height, monitor.x, monitor.y
     );
+
+    // Activate clipping and play the activation sound.
     activate_clipping(rect)?;
     println!("Cursor locked. It will be unlocked after 20 seconds.");
 
     sleep(Duration::from_secs(20));
 
+    // Deactivate clipping and play the deactivation sound.
     deactivate_clipping()?;
     println!("Cursor clipping deactivated. Exiting.");
+
     Ok(())
 }
