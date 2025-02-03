@@ -15,7 +15,6 @@ use windows::Win32::System::LibraryLoader::GetModuleHandleW;
 use windows::Win32::UI::Input::KeyboardAndMouse::RegisterHotKey;
 use windows::Win32::UI::Input::KeyboardAndMouse::UnregisterHotKey;
 use windows::Win32::UI::Input::KeyboardAndMouse::HOT_KEY_MODIFIERS;
-use windows::Win32::UI::Input::KeyboardAndMouse::VK_F9;
 use windows::Win32::UI::WindowsAndMessaging::CreateWindowExW;
 use windows::Win32::UI::WindowsAndMessaging::DefWindowProcW;
 use windows::Win32::UI::WindowsAndMessaging::DestroyWindow;
@@ -96,10 +95,10 @@ fn create_message_window() -> Result<HWND> {
 /// Spawns a thread that registers F9 as a global hotkey (using a hidden window) and listens for WM_HOTKEY messages.
 /// When the hotkey is pressed, the clipping state is toggled. The provided `rect` is used for activation,
 /// and `enabled` is a shared flag.
-pub fn run_hotkey_listener(rect: RECT, enabled: Arc<AtomicBool>) -> Result<()> {
+pub fn run_hotkey_listener(rect: RECT, enabled: Arc<AtomicBool>, key: u32) -> Result<()> {
     // Spawn a thread to run the message loop.
     std::thread::spawn(move || {
-        if let Err(e) = run_hotkey_listener_inner(rect, enabled) {
+        if let Err(e) = run_hotkey_listener_inner(rect, enabled, key) {
             eprintln!("Error in hotkey listener thread: {:?}", e);
         }
     });
@@ -107,7 +106,7 @@ pub fn run_hotkey_listener(rect: RECT, enabled: Arc<AtomicBool>) -> Result<()> {
     Ok(())
 }
 
-pub fn run_hotkey_listener_inner(rect: RECT, enabled: Arc<AtomicBool>) -> Result<()> {
+pub fn run_hotkey_listener_inner(rect: RECT, enabled: Arc<AtomicBool>, key: u32) -> Result<()> {
     // Create the hidden message window.
     let hwnd = create_message_window()?;
 
@@ -116,7 +115,7 @@ pub fn run_hotkey_listener_inner(rect: RECT, enabled: Arc<AtomicBool>) -> Result
         let hotkey_id = 1;
         // Use no modifiers.
         let modifiers = HOT_KEY_MODIFIERS::default();
-        RegisterHotKey(hwnd, hotkey_id, modifiers, VK_F9.0 as u32)
+        RegisterHotKey(hwnd, hotkey_id, modifiers, key)
             .wrap_err("Failed to register hotkey")?;
     }
 

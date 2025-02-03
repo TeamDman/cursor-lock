@@ -6,6 +6,7 @@ description = "A Windows tool to lock your cursor to the bounds of a given monit
 
 [dependencies]
 color-eyre = "0.6.3"
+crossterm = "0.28.1"
 ctrlc = "3.4.5"
 eyre = "0.6.12"
 rodio = "0.20.1"
