@@ -1,5 +1,6 @@
 mod chimes;
 mod clip_cursor;
+mod focus;
 mod hotkeys;
 mod monitors;
 
@@ -45,6 +46,8 @@ fn main() -> eyre::Result<()> {
 
     // Launch the hotkey listener in a separate thread.
     hotkeys::run_hotkey_listener(rect, enabled.clone())?;
+    // Launch the focus hook so that we reapply the clip when the foreground window changes.
+    focus::run_focus_hook(rect, enabled.clone())?;
 
     // Install a Ctrl+C handler to ensure clipping is deactivated on exit.
     {
