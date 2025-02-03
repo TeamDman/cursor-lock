@@ -86,7 +86,7 @@ fn create_message_window() -> Result<HWND> {
             None, // No additional parameters.
         )?;
 
-        if hwnd.0 == std::ptr::null_mut() {
+        if hwnd.0.is_null() {
             eyre::bail!("Failed to create hidden window");
         }
         Ok(hwnd)
